@@ -18,7 +18,7 @@ const Render = function (self, h) {
   this.h = h
   this.self = self
 }
- 
+
 Render.prototype.main = function () {
   let that = this
   let { h, self } = that
@@ -117,7 +117,7 @@ Render.prototype.clear = function () {
   let { h, self } = this
   return h(QIcon, {
     staticClass: 'cursor-pointer',
-    props: { 
+    props: {
       name: self.clearIcon || self.$q.iconSet.field.clear
     },
     on: {
@@ -158,24 +158,27 @@ Render.prototype.trigger = function () {
 Render.prototype.popup = function () {
   let that = this
   let { self } = that
-  return that.factory({ 
-    ref: 'popup', 
-    component: QPopupProxy, 
-    children: [that.card()],
-    cbOptions (options) {
-      delete options.props.target
-      options.on['before-show'] = self.onPopupShow
-      options.on['before-hide'] = self.onPopupHide
-      if (self.target === 'self' || !!self.displayValue) {
-        options.attrs.fit = true
-        options.attrs.cover = true
-        options.attrs.anchor = self.anchor === void 0 ? 'top left' : self.anchor
-      } else {
-        options.attrs.fit = false
-        options.attrs.cover = true
+  const preventPopup = (this.self.$attrs['preventpopup-when-readonly'] && self.readonly)
+  if (!preventPopup) {
+    return that.factory({
+      ref: 'popup',
+      component: QPopupProxy,
+      children: [that.card()],
+      cbOptions (options) {
+        delete options.props.target
+        options.on['before-show'] = self.onPopupShow
+        options.on['before-hide'] = self.onPopupHide
+        if (self.target === 'self' || !!self.displayValue) {
+          options.attrs.fit = true
+          options.attrs.cover = true
+          options.attrs.anchor = self.anchor === void 0 ? 'top left' : self.anchor
+        } else {
+          options.attrs.fit = false
+          options.attrs.cover = true
+        }
       }
-    }
-  })
+    })
+  }
 }
 
 Render.prototype.card = function () {
